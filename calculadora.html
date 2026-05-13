@@ -1,0 +1,1101 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1280">
+    <title>Calculadora de Beneficios - FENTTRAHOP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Yantramanav:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="assets/animatecss/animate.css">
+    <style>
+        :root {
+            --verde-lima: #9BCD32;
+            --verde-oscuro: #7BA828;
+            --magenta: #D81B60;
+            --magenta-oscuro: #B01550;
+            --blanco: #FFFFFF;
+            --gris-claro: #F5F5F5;
+            --gris-texto: #333333;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Yantramanav', 'Open Sans', Arial, sans-serif;
+            font-size: 18px;
+            line-height: 1.55;
+            background-color: var(--gris-claro);
+            color: var(--gris-texto);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--verde-lima) 0%, var(--verde-oscuro) 100%);
+            color: var(--blanco);
+            text-align: center;
+            padding: 15px 15px; /* Menos padding */
+        }
+
+        .header h1 {
+            font-family: 'Poppins', Arial, sans-serif;
+            font-size: clamp(24px, 5vw, 36px);
+            font-weight: 900;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-family: 'Yantramanav', Arial, sans-serif;
+            font-size: clamp(16px, 3vw, 20px);
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px 12px 25px;
+        }
+
+        .card {
+            background: var(--blanco);
+            border-radius: 16px;
+            padding: 18px 14px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+            border-top: 5px solid var(--magenta);
+            margin-bottom: 18px;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-title {
+            font-family: 'Poppins', Arial, sans-serif;
+            font-size: clamp(22px, 4vw, 28px);
+            font-weight: 700;
+            color: var(--magenta);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .input-group { margin-bottom: 12px; }
+
+        .input-group label {
+            display: block;
+            font-size: clamp(15px, 2.3vw, 18px);
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: #555;
+            font-family: 'Yantramanav', Arial, sans-serif;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: clamp(16px, 2.8vw, 20px);
+            font-weight: 400;
+            border: 2px solid #E0E0E0;
+            border-radius: 10px;
+            text-align: center;
+            font-family: 'Yantramanav', Arial, sans-serif;
+            background: #FAFAFA;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--verde-lima);
+            background: var(--blanco);
+            box-shadow: 0 0 0 3px rgba(155, 205, 50, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .tiempo-info {
+            background: var(--verde-lima); /* Fondo sólido para ahorrar tinta si se imprime en B/N */
+            color: #000;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: 500;
+            font-size: clamp(16px, 2.5vw, 20px);
+            display: none;
+        }
+        
+        .tiempo-info.visible { display: block; animation: fade 0.3s; }
+
+        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+        .btn-calcular {
+            width: 100%;
+            padding: 13px 16px;
+            font-size: clamp(18px, 3vw, 24px);
+            font-family: 'Poppins', Arial, sans-serif;
+            font-weight: 700;
+            color: var(--blanco);
+            background: linear-gradient(135deg, var(--verde-lima) 0%, var(--verde-oscuro) 100%);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-bottom: 12px;
+            box-shadow: 0 6px 18px rgba(123, 168, 40, 0.3);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .btn-calcular:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #3d3153 0%, #2f2438 100%);
+            box-shadow: 0 8px 24px rgba(47, 36, 56, 0.4);
+        }
+
+        .btn-calcular:active { transform: scale(0.98); }
+
+        .resultados { display: none; margin-top: 20px; }
+        .resultados.visible { display: block; animation: fade 0.5s; }
+
+        .resultado-item {
+            background: linear-gradient(135deg, #F8F9FA 0%, #F0F1F3 100%);
+            padding: 11px 12px;
+            margin-bottom: 6px;
+            border-radius: 10px;
+            border-left: 4px solid var(--verde-lima);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.4s ease-out backwards;
+        }
+
+        .resultado-item:nth-child(1) { animation-delay: 0.05s; }
+        .resultado-item:nth-child(2) { animation-delay: 0.1s; }
+        .resultado-item:nth-child(3) { animation-delay: 0.15s; }
+        .resultado-item:nth-child(4) { animation-delay: 0.2s; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .resultado-item:hover {
+            background: linear-gradient(135deg, #FFFFFF 0%, #F5F6F8 100%);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateX(4px);
+        }
+
+        .resultado-item .label {
+            font-size: clamp(15px, 2.3vw, 18px);
+            font-weight: 500;
+            flex: 1;
+            color: #555;
+            font-family: 'Yantramanav', Arial, sans-serif;
+        }
+
+        .resultado-item .monto {
+            font-family: 'Poppins', Arial, sans-serif;
+            font-size: clamp(18px, 3vw, 26px);
+            font-weight: 700;
+            color: var(--verde-oscuro);
+        }
+
+        .resultado-item.total {
+            background: linear-gradient(135deg, var(--magenta) 0%, var(--magenta-oscuro) 100%);
+            border-left-color: var(--magenta-oscuro);
+            margin-top: 8px;
+            box-shadow: 0 6px 16px rgba(216, 27, 96, 0.25);
+        }
+
+        .resultado-item.total:hover {
+            transform: translateX(4px);
+            box-shadow: 0 8px 20px rgba(216, 27, 96, 0.35);
+        }
+
+        .resultado-item.total .label,
+        .resultado-item.total .monto { color: var(--blanco); }
+
+        .btn-acciones { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+            margin-top: 15px; 
+            width: 100%;
+        }
+
+        .btn-accion {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: clamp(15px, 2.8vw, 20px);
+            font-family: 'Poppins', Arial, sans-serif;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: fadeInUp 0.5s ease-out backwards;
+        }
+
+        .btn-accion:nth-of-type(1) { animation-delay: 0.25s; }
+        .btn-accion:nth-of-type(2) { animation-delay: 0.3s; }
+        .btn-accion:nth-of-type(3) { animation-delay: 0.35s; }
+
+        .btn-accion:hover { 
+            transform: translateY(-3px);
+        }
+        .btn-accion:active { transform: scale(0.97); }
+        
+        .btn-whatsapp { 
+            background: linear-gradient(135deg, #25D366 0%, #20ba58 100%);
+            color: var(--blanco); 
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+        }
+        .btn-whatsapp:hover {
+            background: linear-gradient(135deg, #2f2438 0%, #1f1f1f 100%);
+            box-shadow: 0 8px 20px rgba(47, 36, 56, 0.35);
+        }
+        
+        .btn-imprimir { 
+            background: linear-gradient(135deg, #404040 0%, #2a2a2a 100%);
+            color: var(--blanco); 
+            box-shadow: 0 4px 12px rgba(51, 51, 51, 0.25);
+        }
+        .btn-imprimir:hover {
+            box-shadow: 0 8px 20px rgba(51, 51, 51, 0.35);
+        }
+        
+        .btn-reiniciar { 
+            background: linear-gradient(135deg, #A0A0A0 0%, #888888 100%);
+            color: var(--blanco); 
+            box-shadow: 0 4px 12px rgba(153, 153, 153, 0.25);
+        }
+        .btn-reiniciar:hover {
+            box-shadow: 0 8px 20px rgba(153, 153, 153, 0.35);
+        }
+
+        .error {
+            background: linear-gradient(135deg, #FFE0E0 0%, #FFCCCC 100%);
+            border: 2px solid var(--magenta);
+            border-radius: 10px;
+            padding: 11px 12px;
+            text-align: center;
+            display: none;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(216, 27, 96, 0.15);
+        }
+        .error.visible { 
+            display: block;
+            animation: pulse 0.5s ease-out;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .error p { 
+            font-size: 15px; 
+            font-weight: 500; 
+            color: var(--magenta);
+            margin: 0;
+            font-family: 'Yantramanav', Arial, sans-serif;
+        }
+
+        .ayuda {
+            background: var(--blanco);
+            border-radius: 14px;
+            padding: 14px 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+            border-left: 4px solid var(--verde-lima);
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ayuda h3 {
+            font-family: 'Poppins', Arial, sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--verde-oscuro);
+            margin-bottom: 6px;
+        }
+        .ayuda ul { list-style: none; padding: 0; margin: 0; }
+        .ayuda li {
+            font-size: 14px;
+            font-weight: 400;
+            padding: 4px 0 4px 22px;
+            position: relative;
+            border-bottom: 1px solid #F0F0F0;
+            color: #666;
+            font-family: 'Yantramanav', Arial, sans-serif;
+        }
+        .ayuda li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            font-weight: 800;
+            color: var(--verde-lima);
+            font-size: 16px;
+        }
+
+        .footer {
+            background: var(--verde-oscuro) !important;
+            color: var(--blanco) !important;
+            text-align: center !important;
+            padding: 12px 15px !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            display: block !important;
+            width: 100% !important;
+            position: relative !important;
+        }
+        .footer p { 
+            font-size: 16px !important;
+            font-weight: 500 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            font-family: 'Yantramanav', Arial, sans-serif !important;
+        }
+        
+        /* Asegurar que el footer de calculadora no sea afectado por estilos globales */
+        .footer.cid-vj5DMeUWxW { display: none !important; }
+
+        /* ESTILOS DE IMPRESIÓN OPTIMIZADOS PARA 1 HOJA */
+        @media print {
+            .btn-calcular, 
+            .btn-acciones, 
+            .header p, 
+            .ayuda,
+            .tiempo-info { /* Ocultamos el tiempo también para ahorrar espacio, o lo mostramos si cabe */
+                display: none !important;
+            }
+            
+            body { 
+                background: white; 
+                font-size: 14px !important; /* Texto base pequeño para impresión */
+            }
+            
+            .container { padding: 0; }
+            
+            .header {
+                padding: 10px;
+                background: white !important; /* Ahorra tinta */
+                color: #000 !important;
+                border-bottom: 3px solid #000;
+            }
+            .header h1 { font-size: 22px; color: #000; }
+            
+            .card { 
+                box-shadow: none; 
+                border: 2px solid #000;
+                padding: 10px;
+                border-top: none;
+            }
+            
+            .card-title { font-size: 20px; color: #000; margin-bottom: 10px; }
+            
+            .input-group { margin-bottom: 5px; }
+            .input-group label { font-size: 16px; }
+            .input-group input { 
+                font-size: 18px; 
+                padding: 5px; 
+                border: 1px solid #000;
+            }
+            
+            .resultado-item {
+                padding: 8px;
+                margin-bottom: 5px;
+                background: #f0f0f0 !important; /* Fondo gris claro para diferenciar */
+            }
+            
+            .resultado-item .monto { font-size: 24px; }
+            .resultado-item .label { font-size: 16px; }
+            
+            .resultado-item.total { 
+                background: #000 !important; 
+                color: white !important; 
+                margin-top: 5px; 
+            }
+            .resultado-item.total .monto, .resultado-item.total .label { color: white !important; }
+            
+            .footer {
+                background: white;
+                color: #000;
+                border-top: 2px solid #000;
+                padding: 10px;
+                margin-top: 10px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px 10px 30px; }
+            .card { padding: 15px 10px; }
+            .resultado-item { flex-direction: column; align-items: flex-start; }
+            .resultado-item .monto { align-self: flex-end; }
+        }
+
+        /* FAQ Header morado como en index.html */
+        .fenttrahop-faq-header {
+            background: linear-gradient(135deg, #7B5CF6 80%, #5F4B8B 100%) !important;
+            color: #fff !important;
+            border-radius: 18px 18px 0 0 !important;
+            padding: 18px 24px 10px 24px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            font-family: 'Poppins', Arial, sans-serif !important;
+        }
+
+        .fenttrahop-faq-title {
+            font-size: 1.25rem !important;
+            font-weight: 700 !important;
+            line-height: 1.2 !important;
+            font-family: 'Poppins', Arial, sans-serif !important;
+        }
+
+        .fenttrahop-faq-subtitle {
+            font-size: 1rem !important;
+            font-weight: 400 !important;
+            display: block !important;
+            opacity: 0.85 !important;
+            font-family: 'Poppins', Arial, sans-serif !important;
+        }
+
+        .fenttrahop-faq-close {
+            font-size: 2rem !important;
+            cursor: pointer !important;
+            margin-left: 12px !important;
+            color: #fff !important;
+            opacity: 0.8 !important;
+            background: none !important;
+            border: none !important;
+            transition: opacity 0.2s !important;
+            padding: 0 !important;
+        }
+
+        .fenttrahop-faq-close:hover {
+            opacity: 1 !important;
+        }
+
+        .fenttrahop-faq-body {
+            padding: 18px 24px 24px 24px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 14px !important;
+            max-height: 60vh !important;
+            overflow-y: auto !important;
+            font-family: 'Poppins', Arial, sans-serif !important;
+        }
+
+        .fenttrahop-faq-item {
+            background: #f6f6fa !important;
+            border-radius: 10px !important;
+            margin-bottom: 10px !important;
+            box-shadow: 0 1px 4px rgba(123,92,246,0.04) !important;
+            border: none !important;
+        }
+
+        .faq-question {
+            width: 100% !important;
+            background: none !important;
+            border: none !important;
+            outline: none !important;
+            font-size: 1.05rem !important;
+            color: #333 !important;
+            padding: 12px 14px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            cursor: pointer !important;
+            font-weight: 600 !important;
+            border-radius: 10px !important;
+            transition: background 0.2s !important;
+            font-family: 'Poppins', Arial, sans-serif !important;
+        }
+
+        .faq-question:hover {
+            background: #ece9fa !important;
+        }
+
+        .faq-icon {
+            font-size: 1.3em !important;
+            margin-left: 10px !important;
+            transition: color 0.2s !important;
+        }
+
+        .faq-answer {
+            display: none !important;
+            padding: 0 14px 12px 14px !important;
+            font-size: 1rem !important;
+            color: #444 !important;
+            border-radius: 0 0 10px 10px !important;
+            background: #f6f6fa !important;
+            border-left: 3px solid #7B5CF6 !important;
+            margin-top: -2px !important;
+            margin-bottom: 2px !important;
+            box-shadow: 0 2px 8px rgba(123,92,246,0.06) !important;
+        }
+
+        .faq-answer.open {
+            display: block !important;
+            animation: fadeInFaq 0.35s cubic-bezier(.4,0,.2,1) !important;
+        }
+
+        @keyframes fadeInFaq {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .faq-footer-link {
+            display: inline-block !important;
+            margin-top: 10px !important;
+            background: #7B5CF6 !important;
+            color: #fff !important;
+            padding: 7px 18px !important;
+            border-radius: 8px !important;
+            text-decoration: none !important;
+            font-size: 1rem !important;
+            font-weight: 500 !important;
+            font-family: 'Poppins', Arial, sans-serif !important;
+            transition: all 0.2s !important;
+        }
+
+        .faq-footer-link:hover {
+            background: #5F4B8B !important;
+            box-shadow: 0 4px 12px rgba(123, 92, 246, 0.25) !important;
+        }
+
+        /* Botón FAQ morado también */
+        .fenttrahop-faq-toggle {
+            background: #7B5CF6 !important;
+        }
+
+        .fenttrahop-faq-toggle:hover {
+            background: #5F4B8B !important;
+            box-shadow: 0 6px 20px rgba(123, 92, 246, 0.35) !important;
+        }
+
+        </style>
+    <link rel="stylesheet" href="assets/custom/css/professional.css">
+</head>
+<body>
+
+    <div class="manos-hashtag-banner" style="width:100%;display:flex;justify-content:center;align-items:center;padding:32px 0 12px 0;">
+        <span style="font-family:'Poppins',sans-serif;font-size:1.18rem;color:#2f2438;">Puedes encontrar nuestras publicaciones en redes con el </span>
+        <span style="background:#d81b60;color:#fff;font-family:'Poppins',sans-serif;font-weight:800;font-size:1.18rem;border-radius:16px;padding:7px 18px;margin-left:10px;box-shadow:0 4px 18px #d81b6022;letter-spacing:0.01em;display:inline-block;">#fenttrahop</span>
+    </div>
+
+    <header class="header">
+        <button type="button" onclick="goBack()" style="position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.85); border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer;">←</button>
+        <h1>🧮 Calcula tus Beneficios</h1>
+        <p>Sabé cuánto te corresponde por ley</p>
+    </header>
+
+    <main class="container">
+        <div class="card">
+            <h2 class="card-title">💰 Mis Beneficios</h2>
+
+            <div class="error" id="error"><p id="errorMsg">⚠️ Error</p></div>
+
+            <div class="input-group">
+                <label for="sueldo">💵 ¿Cuánto ganás por mes?</label>
+                <input type="number" id="sueldo" placeholder="Ej: 1130" min="0" step="0.01">
+            </div>
+
+            <div class="input-group">
+                <label for="fechaInicio">📅 Fecha de inicio:</label>
+                <input type="date" id="fechaInicio">
+            </div>
+
+            <div class="input-group">
+                <label for="fechaFin">📅 Fecha de fin: <small style="font-weight:400;color:#666">(vacío = hoy)</small></label>
+                <input type="date" id="fechaFin">
+            </div>
+
+            <div class="tiempo-info" id="tiempoInfo">⏱️ --</div>
+
+            <button class="btn-calcular" onclick="calcular()">🔢 CALCULAR</button>
+
+            <div class="resultados" id="resultados">
+                <div class="resultado-item"><span class="label">🏦 CTS:</span><span class="monto" id="res-cts">S/ 0.00</span></div>
+                <div class="resultado-item"><span class="label">🎉 Gratificación:</span><span class="monto" id="res-grati">S/ 0.00</span></div>
+                <div class="resultado-item"><span class="label">🏖️ Vacaciones:</span><span class="monto" id="res-vaca">S/ 0.00</span></div>
+                <div class="resultado-item total"><span class="label">💵 TOTAL:</span><span class="monto" id="res-total">S/ 0.00</span></div>
+                
+                <div class="btn-acciones">
+                    <button class="btn-accion btn-whatsapp" onclick="enviarWhatsApp()">💬 Enviar por WhatsApp</button>
+                    <button class="btn-accion btn-imprimir" onclick="imprimir()">🖨️ Imprimir</button>
+                    <button class="btn-accion btn-reiniciar" onclick="reiniciar()">🔄 Nuevo cálculo</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="ayuda">
+            <h3>📌 ¿Qué es cada cosa?</h3>
+            <ul>
+                <li><strong>CTS:</strong> Ahorro depositado en mayo y noviembre (15 días de sueldo)</li>
+                <li><strong>Gratificación:</strong> Pago extra en julio y diciembre (1 sueldo si ≥ 4 meses)</li>
+                <li><strong>Vacaciones:</strong> 30 días de descanso pagado por año</li>
+            </ul>
+        </div>
+    </main>
+
+    <script>
+        ['fechaInicio','fechaFin'].forEach(id => {
+            document.getElementById(id).addEventListener('change', mostrarTiempo);
+        });
+
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
+        function mostrarTiempo() {
+            const inicio = document.getElementById('fechaInicio').value;
+            const fin = document.getElementById('fechaFin').value || new Date().toISOString().split('T')[0];
+            const info = document.getElementById('tiempoInfo');
+            
+            if (!inicio) { info.classList.remove('visible'); return; }
+            
+            const [a1,m1,d1] = inicio.split('-').map(Number);
+            const [a2,m2,d2] = fin.split('-').map(Number);
+            const f1 = new Date(a1, m1-1, d1);
+            const f2 = new Date(a2, m2-1, d2);
+            
+            if (f2 < f1) { info.classList.remove('visible'); return; }
+            
+            let meses = (a2-a1)*12 + (m2-m1);
+            if (d2 < d1) meses--;
+            if (meses < 0) meses = 0;
+            
+            const años = Math.floor(meses/12);
+            const mesesRest = meses%12;
+            let txt = '⏱️ ';
+            if (años>0) txt += `${años} año${años>1?'s':''} `;
+            if (mesesRest>0) txt += `${mesesRest} mes${mesesRest>1?'es':''}`;
+            if (años===0 && mesesRest===0) txt = '⏱️ Menos de 1 mes';
+            
+            info.textContent = txt;
+            info.classList.add('visible');
+        }
+
+        function calcular() {
+            const sueldo = parseFloat(document.getElementById('sueldo').value);
+            const inicio = document.getElementById('fechaInicio').value;
+            const finInput = document.getElementById('fechaFin').value;
+            const fin = finInput || new Date().toISOString().split('T')[0];
+            const error = document.getElementById('error');
+            const errorMsg = document.getElementById('errorMsg');
+            const resultados = document.getElementById('resultados');
+            
+            error.classList.remove('visible');
+            resultados.classList.remove('visible');
+            
+            if (!sueldo || sueldo <= 0) {
+                errorMsg.textContent = '⚠️ Ingresá un sueldo válido';
+                error.classList.add('visible'); return;
+            }
+            if (!inicio) {
+                errorMsg.textContent = '⚠️ Seleccioná fecha de inicio';
+                error.classList.add('visible'); return;
+            }
+            
+            const [a1,m1,d1] = inicio.split('-').map(Number);
+            const [a2,m2,d2] = fin.split('-').map(Number);
+            const f1 = new Date(a1, m1-1, d1);
+            const f2 = new Date(a2, m2-1, d2);
+            
+            if (f2 < f1) {
+                errorMsg.textContent = '⚠️ Fecha fin debe ser mayor';
+                error.classList.add('visible'); return;
+            }
+            
+            let meses = (a2-a1)*12 + (m2-m1);
+            if (d2 < d1) meses--;
+            if (meses < 1) {
+                errorMsg.textContent = '⚠️ Mínimo 1 mes trabajado';
+                error.classList.add('visible'); return;
+            }
+            
+            const cts = (sueldo / 12) * meses;
+            const gratificacion = meses >= 4 ? sueldo : (sueldo / 6) * meses;
+            const vacaciones = (sueldo / 12) * meses;
+            const total = cts + gratificacion + vacaciones;
+            
+            const fmt = n => 'S/ ' + n.toFixed(2);
+            document.getElementById('res-cts').textContent = fmt(cts);
+            document.getElementById('res-grati').textContent = fmt(gratificacion);
+            document.getElementById('res-vaca').textContent = fmt(vacaciones);
+            document.getElementById('res-total').textContent = fmt(total);
+            
+            resultados.classList.add('visible');
+            setTimeout(() => resultados.scrollIntoView({behavior:'smooth', block:'center'}), 100);
+        }
+
+        function enviarWhatsApp() {
+            const sueldo = document.getElementById('sueldo').value;
+            const tiempo = document.getElementById('tiempoInfo').textContent;
+            const cts = document.getElementById('res-cts').textContent;
+            const grati = document.getElementById('res-grati').textContent;
+            const vaca = document.getElementById('res-vaca').textContent;
+            const total = document.getElementById('res-total').textContent;
+            
+            const msg = `🧮 *MI CALCULO DE BENEFICIOS*\n\n${tiempo}\n💵 Sueldo: S/ ${sueldo}\n\n🏦 CTS: ${cts}\n🎉 Gratificación: ${grati}\n🏖️ Vacaciones: ${vaca}\n\n💵 *TOTAL: ${total}*\n\n_Calculado con FENTTRAHOP_`;
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function imprimir() { window.print(); }
+        
+        function reiniciar() {
+            document.getElementById('sueldo').value = '';
+            document.getElementById('fechaInicio').value = '';
+            document.getElementById('fechaFin').value = '';
+            document.getElementById('tiempoInfo').classList.remove('visible');
+            document.getElementById('resultados').classList.remove('visible');
+            document.getElementById('error').classList.remove('visible');
+            window.scrollTo({top:0, behavior:'smooth'});
+        }
+    </script>
+  <input name="animation" type="hidden">
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p><strong>FENTTRAHOP</strong> | Ley 31047</p>
+    </footer>
+
+    <!-- Botones flotantes FAQ y WhatsApp -->
+    <div class="fenttrahop-floating-buttons">
+        <button id="toggleFAQ" class="fenttrahop-faq-toggle" type="button" aria-expanded="false" aria-controls="faqPanel" title="Preguntas frecuentes">
+            <i class="fas fa-comments"></i>
+        </button>
+        <a href="https://wa.me/924875748" target="_blank" class="fenttrahop-wa-btn" title="WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+        <aside id="faqPanel" class="fenttrahop-faq-panel" aria-hidden="true">
+            <div class="fenttrahop-faq-header">
+                <div>
+                        <span class="fenttrahop-faq-title">Centro de Ayuda</span>
+                    <span class="fenttrahop-faq-subtitle">FENTTRAHOP</span>
+                </div>
+                <button id="closeFAQ" class="fenttrahop-faq-close" type="button" aria-label="Cerrar FAQ">×</button>
+            </div>
+            <div class="fenttrahop-faq-body">
+                <div class="fenttrahop-faq-item">
+                    <button class="faq-question" type="button">
+                        <span>❓ ¿Cómo me afilio a la federación?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        Puedes comunicarte con nuestras bases regionales o contactarnos vía WhatsApp. Te guiaremos en el proceso de afiliación según tu región.
+                        <a class="faq-footer-link" href="Formación_sindical.html">Ir a Formación sindical</a>
+                    </div>
+                </div>
+                <div class="fenttrahop-faq-item">
+                    <button class="faq-question" type="button">
+                        <span>👷‍♀️ ¿Cuáles son mis derechos como trabajadora del hogar?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        Como trabajadora del hogar tienes derecho a: contrato escrito, salario justo, jornada laboral de 8 horas, día de descanso semanal, seguro de salud, gratificación, CTS, aportes a pensión y protección ante despido injustificado.
+                        <a class="faq-footer-link" href="Consultorio_juridico_sindical.html">Ir a Consultorio Jurídico Sindical</a>
+                    </div>
+                </div>
+                <div class="fenttrahop-faq-item">
+                    <button class="faq-question" type="button">
+                        <span>⚖️ ¿Cómo accedo a asesoría legal?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        Haz clic en "Consultorio Jurídico Sindical" en el menú principal. Nuestros abogados especializados están disponibles para orientarte en conflictos laborales, despidos injustificados y más.
+                        <a class="faq-footer-link" href="Consultorio_juridico_sindical.html">Ir a Consultorio Jurídico Sindical</a>
+                    </div>
+                </div>
+                <div class="fenttrahop-faq-item">
+                    <button class="faq-question" type="button">
+                        <span>🧮 ¿Cómo calculo mis beneficios?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        Usa nuestra calculadora de beneficios para saber cuánto debes recibir por gratificación, CTS, vacaciones y más.
+                        <a class="faq-footer-link" href="calculadora.html">Ir a Calculadora</a>
+                    </div>
+                </div>
+                <div class="fenttrahop-faq-item">
+                    <button class="faq-question" type="button">
+                        <span>📋 ¿Necesito un modelo de contrato?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        Descarga nuestro modelo de contrato legal adaptado a la Ley de Trabajadoras del Hogar para proteger tus derechos desde el primer día.
+                        <a class="faq-footer-link" href="Formacion_sindical - Modelo_de_Contrato.html">Ir a Modelo de contrato</a>
+                    </div>
+                </div>
+                <div class="fenttrahop-faq-item">
+                    <button class="faq-question" type="button">
+                        <span>📞 ¿Cómo me contacto con FENTTRAHOP?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        Puedes contactarnos vía WhatsApp, correo electrónico o visitando una base regional. También puedes agendar una consulta desde el menú.
+                        <a class="faq-footer-link" href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0M_sG4FLuT0SaXHjEBdY7ZqyljqE3yy5I4CHHsQc-_Jgf-6LWNeJpcsIXk9y4oFp9tZ-7_vxPb" target="_blank">Ir a Contacto</a>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Font Awesome CDN for icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+
+        <style>
+            .fenttrahop-floating-buttons {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                z-index: 1001;
+                display: flex;
+                flex-direction: column;
+                gap: 18px;
+                align-items: flex-end;
+            }
+            .fenttrahop-faq-toggle, .fenttrahop-wa-btn {
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 30px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+                transition: transform 0.2s;
+                border: none;
+                outline: none;
+                cursor: pointer;
+                margin: 0;
+                padding: 0;
+            }
+            .fenttrahop-faq-toggle {
+                background: linear-gradient(135deg, #7B5CF6 80%, #5F4B8B 100%);
+                color: #fff;
+            }
+            .fenttrahop-faq-toggle:hover {
+                transform: scale(1.08) rotate(-4deg);
+                background: linear-gradient(135deg, #5F4B8B 80%, #7B5CF6 100%);
+            }
+            .fenttrahop-wa-btn {
+                background: #25d366;
+                color: #fff;
+                text-decoration: none;
+            }
+            .fenttrahop-wa-btn:hover {
+                transform: scale(1.08) rotate(4deg);
+                background: #2f2438;
+            }
+            .fenttrahop-faq-panel {
+                position: fixed;
+                right: 20px;
+                bottom: 90px;
+                width: 370px;
+                max-width: 95vw;
+                background: #fff;
+                border-radius: 18px 18px 0 0;
+                box-shadow: 0 8px 32px rgba(123,92,246,0.12);
+                z-index: 1002;
+                display: none;
+                flex-direction: column;
+                font-family: 'Poppins', Arial, sans-serif !important;
+                animation: none;
+                opacity: 0;
+                transform: translateY(60px);
+                transition: opacity 0.35s cubic-bezier(.4,0,.2,1), transform 0.35s cubic-bezier(.4,0,.2,1);
+            }
+            .fenttrahop-faq-panel.open {
+                display: flex;
+                opacity: 1;
+                transform: translateY(0);
+                animation: none;
+            }
+            .fenttrahop-faq-header {
+                background: linear-gradient(135deg, #7B5CF6 80%, #5F4B8B 100%);
+                color: #fff;
+                border-radius: 18px 18px 0 0;
+                padding: 18px 24px 10px 24px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                font-family: 'Poppins', Arial, sans-serif !important;
+            }
+            .fenttrahop-faq-title {
+                font-size: 1.25rem;
+                font-weight: 700;
+                line-height: 1.2;
+                font-family: 'Poppins', Arial, sans-serif !important;
+            }
+            .fenttrahop-faq-subtitle {
+                font-size: 1rem;
+                font-weight: 400;
+                display: block;
+                opacity: 0.85;
+                font-family: 'Poppins', Arial, sans-serif !important;
+            }
+            .fenttrahop-faq-close {
+                font-size: 2rem;
+                cursor: pointer;
+                margin-left: 12px;
+                color: #fff;
+                opacity: 0.8;
+                background: none;
+                border: none;
+                transition: opacity 0.2s;
+            }
+            .fenttrahop-faq-close:hover {
+                opacity: 1;
+            }
+            .fenttrahop-faq-body {
+                padding: 18px 24px 24px 24px;
+                display: flex;
+                flex-direction: column;
+                gap: 14px;
+                max-height: 60vh;
+                overflow-y: auto;
+                font-family: 'Poppins', Arial, sans-serif !important;
+            }
+            .fenttrahop-faq-item {
+                background: #f6f6fa;
+                border-radius: 10px;
+                margin-bottom: 10px;
+                box-shadow: 0 1px 4px rgba(123,92,246,0.04);
+                font-family: 'Poppins', Arial, sans-serif !important;
+            }
+            .faq-question {
+                width: 100%;
+                background: none;
+                border: none;
+                outline: none;
+                font-size: 1.05rem;
+                color: #333;
+                padding: 12px 14px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                cursor: pointer;
+                font-weight: 600;
+                border-radius: 10px;
+                transition: background 0.2s;
+                font-family: 'Poppins', Arial, sans-serif !important;
+            }
+            .faq-question:hover {
+                background: #ece9fa;
+            }
+            .faq-icon {
+                font-size: 1.3em;
+                margin-left: 10px;
+                transition: color 0.2s;
+                font-family: 'Poppins', Arial, sans-serif !important;
+            }
+            .faq-answer {
+                display: none;
+                padding: 0 14px 12px 14px;
+                font-size: 1rem;
+                color: #444;
+                border-radius: 0 0 10px 10px;
+                background: #f6f6fa;
+                font-family: 'Poppins', Arial, sans-serif !important;
+                border-left: 3px solid #7B5CF6;
+                margin-top: -2px;
+                margin-bottom: 2px;
+                box-shadow: 0 2px 8px rgba(123,92,246,0.06);
+            }
+            .faq-answer.open {
+                display: block;
+                animation: fadeInFaq 0.35s cubic-bezier(.4,0,.2,1);
+            }
+            @keyframes fadeInFaq {
+                from { opacity: 0; transform: translateY(16px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .faq-footer-link {
+                display: inline-block;
+                margin-top: 10px;
+                background: #7B5CF6;
+                color: #fff;
+                padding: 7px 18px;
+                border-radius: 8px;
+                text-decoration: none;
+                font-size: 1rem;
+                font-weight: 500;
+                font-family: 'Poppins', Arial, sans-serif !important;
+                box-shadow: 0 2px 8px rgba(123,92,246,0.10);
+                transition: background 0.2s, box-shadow 0.2s;
+            }
+            .faq-footer-link:hover {
+                background: #5F4B8B;
+                box-shadow: 0 4px 16px rgba(123,92,246,0.18);
+            }
+            @media (max-width: 600px) {
+                .fenttrahop-faq-panel { width: 98vw; right: 1vw; }
+                .fenttrahop-floating-buttons { right: 10px; bottom: 20px; }
+            }
+        </style>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const toggleBtn = document.getElementById('toggleFAQ');
+                const closeBtn = document.getElementById('closeFAQ');
+                const faqPanel = document.getElementById('faqPanel');
+                const faqQuestions = document.querySelectorAll('.faq-question');
+
+                if (!toggleBtn || !closeBtn || !faqPanel) return;
+
+                function setPanel(open) {
+                    faqPanel.classList.toggle('open', open);
+                    faqPanel.setAttribute('aria-hidden', String(!open));
+                    toggleBtn.setAttribute('aria-expanded', String(open));
+                }
+
+                toggleBtn.addEventListener('click', function() {
+                    setPanel(!faqPanel.classList.contains('open'));
+                });
+                closeBtn.addEventListener('click', function() {
+                    setPanel(false);
+                });
+
+                faqQuestions.forEach(function(question) {
+                    question.addEventListener('click', function() {
+                        const answer = this.nextElementSibling;
+                        const icon = this.querySelector('.faq-icon');
+                        const isOpen = answer.classList.contains('open');
+
+                        document.querySelectorAll('.faq-answer').forEach(function(item) {
+                            item.classList.remove('open');
+                        });
+                        document.querySelectorAll('.faq-icon').forEach(function(item) {
+                            item.textContent = '+';
+                        });
+
+                        if (!isOpen) {
+                            answer.classList.add('open');
+                            icon.textContent = '−';
+                        }
+                    });
+                });
+            });
+        </script>
+  <script src="assets/custom/js/professional.js"></script>
+</body>
+</html>
+
+
+
